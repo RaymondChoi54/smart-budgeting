@@ -6,9 +6,9 @@ const config = require('./config');
 
 // Create a new session
 exports.createSession = function(req, res) {
-	User.findOne({username: req.body.username}, 'password', function(err, user) {
-		if(err) {
-			return res.status(500).send("Error: Could not get the user");
+	User.findOne({username: req.body.username}, function(err, user) {
+		if(err || !user) {
+			return res.status(500).send({ auth: false, message: "Error: Could not get the user" });
 		}
 
 		if(bcrypt.compareSync(req.body.password, user.password)) {
@@ -18,7 +18,7 @@ exports.createSession = function(req, res) {
 		    return res.status(200).send({ auth: true, token: token });
 		}
 
-		return res.status(401).send({ auth: false, message: 'Error: incorrect password' })
+		return res.status(401).send({ auth: false, message: 'Error: Incorrect password' })
 	});
 }
 
@@ -48,9 +48,9 @@ exports.createUser = function(req, res) {
 
 // Get the fullname, email, and categories of a user
 exports.getUser = function(req, res) {
-	User.findOne({username: req.params.user}, 'fullname email savedCat', function(err, user) {
-		if(err) {
-			return res.status(500).send("Error: Could not get the user");
+	User.findOne({username: req.params.username}, 'fullname email savedCat', function(err, user) {
+		if(err || !user) {
+			return res.status(500).send({ auth: false, message: "Error: Could not get the user" });
 		}
 
 		if(req.userID.localeCompare(user._id) == 0) {
@@ -61,6 +61,25 @@ exports.getUser = function(req, res) {
 			return res.status(403);
 		}
 	});
+}
+
+// Change the fullname or password of a user
+exports.putUser = function(req, res) {
+	var updater = {}
+	if(req.body.fullname) {
+		updater.fullname = req.body.fullname
+	}
+	if(req.body.password) {
+		updater.password = bcrypt.hashSync(req.body.password, 8);
+	}
+
+	User.findOneAndUpdate({username: req.params.username}, updater, function(err, user) {
+		if(err) {
+			return res.status(500).send({ auth: false, message: "Error: Could not get the user" });
+		}
+		return res.status(200).send('Success: User has been updated');
+	});
+
 }
 
 // Create a new expense for a user

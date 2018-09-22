@@ -13,10 +13,11 @@ app.post('/api/session', userExpenses.createSession);
 
 // Users
 app.post('/api/users', userExpenses.createUser);
-app.get('/api/users/:user', tokenCheck.tokenCheck, userExpenses.getUser);
+app.get('/api/users/:username', tokenCheck.tokenCheck, userExpenses.getUser);
+app.put('/api/users/:username', tokenCheck.tokenCheckUser, userExpenses.putUser);
 
 // Expenses
-app.post('/api/expenses/:user', tokenCheck.tokenCheckUser, userExpenses.createExpense);
+app.post('/api/expenses/:username', tokenCheck.tokenCheckUser, userExpenses.createExpense);
 
 if(!module.parent) {
     app.listen(PORT, () => {

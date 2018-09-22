@@ -33,7 +33,7 @@ var userSchema = new mongoose.Schema({
 
 var expensesSchema = new mongoose.Schema({
 	username: {
-		type: String
+		type: String,
 		required: true,
 		trim: true
 	},
@@ -86,15 +86,13 @@ var expensesSchema = new mongoose.Schema({
 });
 
 //connect to MongoDB
-mongoose.set('useCreateIndex', true)
+mongoose.set('useCreateIndex', true);
+mongoose.set('useFindAndModify', false);
 mongoose.connect('mongodb://' + config.username + ':' + config.password + '@ds163382.mlab.com:63382/budget', { useNewUrlParser: true }, (error) => {
     if (error) console.log(error);
     console.log('Success: Connected to database');
 });
 
-module.exports = {
-					users: mongoose.model('User', userSchema), 
-					expenses: mongoose.model('Expense', expensesSchema)
-				}
+module.exports = { users: mongoose.model('User', userSchema), expenses: mongoose.model('Expense', expensesSchema) }
 
 

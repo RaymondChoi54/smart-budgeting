@@ -33,9 +33,9 @@ exports.tokenCheckUser = function(req, res, next) {
 	var response = tokenCheck(req.headers['x-access-token'], config.secret);
 
 	if(response.auth) {
-		User.findOne({username: req.params.user}, function(err, user) {
-			if(err) {
-				return res.status(500).send("Error: Could not get the user");
+		User.findOne({username: req.params.username}, function(err, user) {
+			if(err || !user) {
+				return res.status(500).send({ auth: false, message: "Error: Could not get the user" });
 			}
 
 			if(response.id.localeCompare(user._id) == 0) {
@@ -44,7 +44,7 @@ exports.tokenCheckUser = function(req, res, next) {
 				next();
 			} else {
 				// Wrong user, no permissions
-				return res.status(403);
+				return res.send({ auth: false, message: "Error: Incorrect permissions" });
 			}
 		});
 	} else {
