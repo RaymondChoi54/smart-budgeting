@@ -37,6 +37,11 @@ var expensesSchema = new mongoose.Schema({
 		required: true,
 		trim: true
 	},
+	category: {
+		type: String,
+		required: true,
+		trim: true
+	},
 	store: {
 		type: String,
 		required: true,
@@ -48,7 +53,7 @@ var expensesSchema = new mongoose.Schema({
 		trim: true
 	},
 	price: {
-		type: Number,		
+		type: Number,
 		required: true,
 		validate: {
 	        validator: function(x) {

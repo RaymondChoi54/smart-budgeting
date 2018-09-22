@@ -20,6 +20,9 @@ app.put('/api/users/:username', tokenCheck.tokenCheckUser, user.putUser);
 
 // Expenses
 app.post('/api/expenses/:username', tokenCheck.tokenCheckUser, expense.createExpense);
+app.get('/api/expenses/:username', tokenCheck.tokenCheckUser, expense.getExpenses);
+app.put('/api/expenses/:username/:id', tokenCheck.tokenCheckUser, expense.putExpense);
+app.delete('/api/expenses/:username/:id', tokenCheck.tokenCheckUser, expense.deleteExpense);
 
 if(!module.parent) {
     app.listen(PORT, () => {
