@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const config = require('./config').database;
 
+// Schema for storing user data
 var userSchema = new mongoose.Schema({
 	fullname: {
 		type: String,
@@ -31,6 +32,7 @@ var userSchema = new mongoose.Schema({
     collection: 'Users',
 });
 
+// Schema for storing user expenses
 var expensesSchema = new mongoose.Schema({
 	username: {
 		type: String,

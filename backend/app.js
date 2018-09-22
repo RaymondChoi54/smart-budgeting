@@ -10,6 +10,11 @@ const tokenCheck = require('./tokenCheck')
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(require("body-parser").json())
 
+// Website
+// app.get('/', function(req, res) {
+
+// });
+
 // Session
 app.post('/api/session', session.createSession);
 
