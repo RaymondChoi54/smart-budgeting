@@ -1,15 +1,5 @@
-var mongoose = require('mongoose');
-
-//connect to MongoDB
-mongoose.connect('mongodb://raymond:123123a@ds163382.mlab.com:63382/budget');
-var db = mongoose.connection;
-
-
-//handle mongo error
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function () {
-  console.log("connected!");
-});
+const mongoose = require('mongoose');
+const config = require('./config').database;
 
 var userSchema = new mongoose.Schema({
 	fullname: {
@@ -36,7 +26,75 @@ var userSchema = new mongoose.Schema({
 	savedCat: [{
 		type: String,
 		required: false
-	}]
+	}],
+}, {
+    collection: 'Users',
 });
 
-module.exports = mongoose.model('User', userSchema);
+var expensesSchema = new mongoose.Schema({
+	username: {
+		type: String
+		required: true,
+		trim: true
+	},
+	store: {
+		type: String,
+		required: true,
+		trim: true
+	},
+	item: {
+		type: String,
+		required: true,
+		trim: true
+	},
+	price: {
+		type: Number,		
+		required: true,
+		validate: {
+	        validator: function(x) {
+	        	return x > 0;
+	        },
+	        message: 'Price of the item needs to be greater than 0'
+    	}
+	},
+	brand: {
+		type: String,
+		required: false,
+		trim: true
+	},
+	size: {
+		type: Number,
+		required: true,
+		min: 0
+	},
+	unit: {
+		type: String,
+		required: true,
+		trim: true
+	},
+	date: {
+		type: Date,
+		required: true
+	},
+	comment: {
+		type: String,
+		required: false,
+		trim: true
+	}, 
+}, {
+    collection: 'Expenses',
+});
+
+//connect to MongoDB
+mongoose.set('useCreateIndex', true)
+mongoose.connect('mongodb://' + config.username + ':' + config.password + '@ds163382.mlab.com:63382/budget', { useNewUrlParser: true }, (error) => {
+    if (error) console.log(error);
+    console.log('Success: Connected to database');
+});
+
+module.exports = {
+					users: mongoose.model('User', userSchema), 
+					expenses: mongoose.model('Expense', expensesSchema)
+				}
+
+
