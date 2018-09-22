@@ -17,6 +17,7 @@ tokenCheck = function(token, secret) {
 	});
 }
 
+// Check if the token is valid and saves the userID
 exports.tokenCheck = function(req, res, next) {
 	var response = tokenCheck(req.headers['x-access-token'], config.secret);
 
@@ -29,6 +30,7 @@ exports.tokenCheck = function(req, res, next) {
 	}
 }
 
+// Checks if the token is valid and checks if the token is for the correct user
 exports.tokenCheckUser = function(req, res, next) {
 	var response = tokenCheck(req.headers['x-access-token'], config.secret);
 
