@@ -1,7 +1,6 @@
 {
   "name": "budgeting-backend",
   "version": "1.0.0",
-  "description": "",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -15,5 +14,8 @@
     "jsonwebtoken": "^8.3.0",
     "mongoose": "^5.2.17",
     "npm": "^6.4.1"
-  }
+  },
+  "devDependencies": {},
+  "keywords": [],
+  "description": ""
 }
