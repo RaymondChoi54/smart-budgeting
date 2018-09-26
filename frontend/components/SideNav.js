@@ -53,6 +53,7 @@ const SideNav = (props) => (
     			padding: 0px;
     			position: fixed;
     			overflow: auto;
+    			box-shadow: 0px 0px 8px #888888;
 			}
 
 			.contents {

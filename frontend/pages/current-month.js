@@ -1,15 +1,18 @@
 import React from 'react'
 import Cookies from 'js-cookie'
 import Config from '../config'
+import fetch from 'node-fetch'
 
 import LayoutBar from '../components/LayoutBar'
+import ExpenseTable from '../components/ExpenseTable'
+import Table from '../components/Table'
 
 import Router from 'next/router'
 
 const names = [
-	{ id: 'dashboard', name: 'Dashboard', on: true},
+	{ id: 'dashboard', name: 'Dashboard', on: false},
 	{ id: 'profile-settings', name: 'Profile & Settings', on: false},
-	{ id: 'current-month', name: 'Current Month', on: false},
+	{ id: 'current-month', name: 'Current Month', on: true},
 	{ id: 'history', name: 'History', on: false},
 	{ id: 'logout', name: 'Logout', on: false}
 ];
@@ -21,7 +24,8 @@ export default class extends React.Component {
 	        fullname: Cookies.get('fullname'),
 	        username: Cookies.get('username'),
 	        token: Cookies.get('token'),
-	        loaded: false
+	        loaded: false,
+	        data: []
 	    };
   	}
 
@@ -35,13 +39,11 @@ export default class extends React.Component {
   	}
 
 	render() {
-	    return (
-	    	<LayoutBar config={names} name={this.state.fullname} barName="Dashboard">
-				<p>This is the Dashboard</p>
+		return (
+	    	<LayoutBar config={names} name={this.state.fullname} barName="Current Monthly Expenses">
+				
+		        <ExpenseTable username={this.state.username} token={this.state.token}/>
 				<style jsx>{`
-					p {
-						height: 1000px;
-					}
 				`}</style>
 			</LayoutBar>
 		)

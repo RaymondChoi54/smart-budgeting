@@ -34,13 +34,14 @@ const Header = (props) => (
 		<style jsx>{`
 			ul {
 				list-style-type: none;
-				background-color: #000080;
+				background-color: black;
     			width: 100%;
     			margin: 0px;
     			padding: 0px;
     			overflow: hidden;
     			position: fixed;
     			top: 0px;
+    			z-index: 1;
 			}
 
 			li {

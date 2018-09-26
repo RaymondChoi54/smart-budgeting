@@ -59,7 +59,7 @@ exports.putUser = function(req, res) {
 		if(err) {
 			return res.status(500).send({ auth: false, message: "Error: Could not get the user" });
 		}
-		return res.status(200).send('Success: User has been updated');
+		return res.status(200).send({ auth: true, message:'Success: User has been updated'});
 	});
 
 }

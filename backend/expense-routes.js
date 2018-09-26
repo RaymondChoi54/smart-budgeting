@@ -80,7 +80,7 @@ exports.putExpense = function(req, res) {
 		updater.comment = req.body.comment;
 	}
 
-	Expense.findOneAndUpdate({username: req.params.username}, updater, function(err, user) {
+	Expense.findOneAndUpdate({username: req.params.username, _id: req.params.id}, updater, function(err, user) {
 		if(err) {
 			return res.status(500).send({ auth: true, message: "Error: Could not get the expense" });
 		}

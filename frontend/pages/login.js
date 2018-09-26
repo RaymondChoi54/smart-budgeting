@@ -12,9 +12,3 @@ export default class extends React.Component {
 	    )
   	}
 }
-
-// export default () => (
-// 	<Layout>
-// 		<LoginBox/>
-// 	</Layout>
-// )
