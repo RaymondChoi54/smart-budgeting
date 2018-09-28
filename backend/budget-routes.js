@@ -46,7 +46,7 @@ function update(username, month, year, callback) {
 }
 
 // Set budget to require update, if budget doesn't exist do nothing
-export.setUpdate = function(username, month, year, callback) {
+exports.setUpdate = function(username, month, year, callback) {
 	var query = Budget.where('username').equals(username);
 	query = query.where('month').equals(month);
 	query = query.where('year').equals(year);
