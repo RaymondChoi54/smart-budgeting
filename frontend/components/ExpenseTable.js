@@ -12,6 +12,12 @@ function convert(row, element) {
 		return new Date(row[element.toLowerCase()]).toUTCString().slice(0, -13)
 	} else if(element == "Price") {
 		return "$" + row[element.toLowerCase()]
+	} else if(element == "Category") {
+		var index = row[element.toLowerCase()]
+		if(index < Config.categories.length) {
+			return Config.categories[row[element.toLowerCase()]]
+		}
+		return "Error"
 	} else {
 		return row[element.toLowerCase()]
 	}
@@ -233,7 +239,10 @@ export default class extends React.Component {
 							<option value="size">Size</option>
 						</select><br/>
 						<div className="headerMenu">Filter by</div>
-						<input type="text" ref="categoryFilter" placeholder="category"/>
+						<select ref="categoryFilter">
+							<option value="">Category</option>
+							{Config.categories.map((name, index) => <option value={index}>{name}</option>)}
+						</select>
 						<input type="text" ref="storeFilter" placeholder="store"/>
 						<input type="text" ref="itemFilter" placeholder="item"/>
 						<input type="number" ref="priceFilter" placeholder="price"/>
@@ -249,7 +258,11 @@ export default class extends React.Component {
 			    	<table>
 						<tbody>
 							<tr className="notEdit">
-								<td><input type="text" ref="category" placeholder="category"/></td>
+								<td>
+									<select ref="category">
+										{Config.categories.map((name, index) => <option value={index}>{name}</option>)}
+									</select>
+								</td>
 					            <td><input type="text" ref="store" placeholder="store"/></td>
 					            <td><input type="text" ref="item" placeholder="item"/></td>
 					            <td><input type="number" ref="price" placeholder="price"/></td>
@@ -338,6 +351,10 @@ export default class extends React.Component {
 					}
 
 					input {
+						width: 90%;
+					}
+
+					select {
 						width: 90%;
 					}
 

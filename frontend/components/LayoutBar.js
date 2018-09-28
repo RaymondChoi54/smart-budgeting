@@ -16,7 +16,6 @@ const LayoutBar = (props) => (
 						background: rgba(254, 254, 254, 0.8);
 						width: calc(100% - 40px);
 						height: 100%;
-						min-height: 1000px;
 						box-shadow: 0px 0px 4px #888888;
 						border-radius: 1px;
 						z-index: -1;

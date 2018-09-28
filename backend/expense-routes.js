@@ -28,6 +28,9 @@ function queryProcess(req) {
 	if(req.query.category) {
 		query = query.where('category').equals(req.query.category)
 	}
+	if(req.query.price) {
+		query = query.where('price').equals(req.query.price)
+	}
 	// Date range
 	if(req.query.startdate && req.query.enddate) {
 		query = query.where('date').gte(req.query.startdate).lt(req.query.enddate)
