@@ -213,19 +213,19 @@ export default class extends React.Component {
 	    		<div className="dropdown">
 		    		<button className="dropButton">Sort/Filter</button>
 		    		<form onSubmit={this.sortFilter} className="sortFilter">
-		    			Sort by<br/>
+		    			<div className="headerMenu">Sort by</div>
 						<select id="sort" name="sort" ref="sortBy">
 							<option value="date" selected="selected">Date</option>
 							<option value="price">Price</option>
 							<option value="size">Size</option>
 						</select><br/>
-						Filter by<br/>
+						<div className="headerMenu">Filter by</div>
 						<input type="text" ref="categoryFilter" placeholder="category"/>
 						<input type="text" ref="storeFilter" placeholder="store"/>
 						<input type="text" ref="itemFilter" placeholder="item"/>
 						<input type="number" ref="priceFilter" placeholder="price"/>
 						<input type="text" ref="brandFilter" placeholder="brand"/><br/>
-						Date range<br/>
+						<div className="headerMenu">Date range</div>
 						<input type="date" ref="dateMin"/>
 						<input type="date" ref="dateMax"/>
 						<input type="submit" value="Submit"/>
@@ -256,6 +256,15 @@ export default class extends React.Component {
 					</table>
 				</form>
 				<style jsx>{`
+
+
+					.headerMenu {
+						background-color: black;
+						color: white;
+						width: 100%;
+						margin: 0px;
+						padding: 0px;
+					}
 					.dropdown {
 						width: 125px;
 						float: right;
@@ -268,12 +277,12 @@ export default class extends React.Component {
 
 					.sortFilter {
 						position: absolute;
+						display: none;
 						width: 125px;
 						background: white;
-						padding: 10px;
-						display: none;
 						box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.2);
     					z-index: 1;
+    					text-align: center;
 					}
 
 					.dropdown:hover .sortFilter {
