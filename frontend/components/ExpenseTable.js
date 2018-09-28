@@ -29,7 +29,6 @@ export default class extends React.Component {
 	        edit: false,
 	        editID: "",
 	        delete: false,
-	        showMenu: false,
 	        url: Config.api + '/expenses/' + this.props.username + '?sort=date'
 	    };
   	}
@@ -194,12 +193,6 @@ export default class extends React.Component {
 		})
 	}
 
-	toggleMenu() {
-		this.setState({
-			showMenu: !this.state.showMenu
-		})
-	}
-
 	render() {
 		fetch(this.state.url, {
 			method: 'get',
@@ -217,27 +210,29 @@ export default class extends React.Component {
 
 	    return (
 	    	<div>
-	    		<button onClick={() => this.toggleMenu()}>Sort/Filter</button>
-	    		<form onSubmit={this.sortFilter} className={this.state.showMenu ? 'sortFilter' : 'sortFilter hidden'}>
-	    			Sort by<br/>
-					<select id="sort" name="sort" ref="sortBy">
-						<option value="date" selected="selected">Date</option>
-						<option value="price">Price</option>
-						<option value="size">Size</option>
-					</select><br/>
-					Filter by<br/>
-					<input type="text" ref="categoryFilter" placeholder="category"/>
-					<input type="text" ref="storeFilter" placeholder="store"/>
-					<input type="text" ref="itemFilter" placeholder="item"/>
-					<input type="number" ref="priceFilter" placeholder="price"/>
-					<input type="text" ref="brandFilter" placeholder="brand"/><br/>
-					Date range<br/>
-					<input type="date" ref="dateMin"/>
-					<input type="date" ref="dateMax"/>
-					<input type="submit" value="Submit"/>
-				</form>
+	    		<div className="dropdown">
+		    		<button className="dropButton">Sort/Filter</button>
+		    		<form onSubmit={this.sortFilter} className="sortFilter">
+		    			Sort by<br/>
+						<select id="sort" name="sort" ref="sortBy">
+							<option value="date" selected="selected">Date</option>
+							<option value="price">Price</option>
+							<option value="size">Size</option>
+						</select><br/>
+						Filter by<br/>
+						<input type="text" ref="categoryFilter" placeholder="category"/>
+						<input type="text" ref="storeFilter" placeholder="store"/>
+						<input type="text" ref="itemFilter" placeholder="item"/>
+						<input type="number" ref="priceFilter" placeholder="price"/>
+						<input type="text" ref="brandFilter" placeholder="brand"/><br/>
+						Date range<br/>
+						<input type="date" ref="dateMin"/>
+						<input type="date" ref="dateMax"/>
+						<input type="submit" value="Submit"/>
+					</form>
+				</div>
 
-		    	<form onSubmit={this.handleSubmit}>
+		    	<form className="expense" onSubmit={this.handleSubmit}>
 			    	<table>
 						<tbody>
 							<tr className="notEdit">
@@ -261,14 +256,32 @@ export default class extends React.Component {
 					</table>
 				</form>
 				<style jsx>{`
-					.sortFilter{
+					.dropdown {
+						width: 125px;
+						float: right;
+						margin: 5px;
+					}
+
+					.dropButton {
+						float: right;
+					}
+
+					.sortFilter {
+						position: absolute;
 						width: 125px;
 						background: white;
 						padding: 10px;
+						display: none;
+						box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.2);
+    					z-index: 1;
 					}
 
-					form {
-						overflow: auto;
+					.dropdown:hover .sortFilter {
+						display: block;
+					}
+
+					.expense {
+						width: 100%;
 					}
 
 					table {
@@ -307,10 +320,6 @@ export default class extends React.Component {
 
 					select {
 						width: 90%
-					}
-
-					.hidden { 
-						display: none; 
 					}
 				`}</style>
 			</div>
