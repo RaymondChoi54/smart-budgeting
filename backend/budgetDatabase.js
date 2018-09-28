@@ -26,6 +26,11 @@ var userSchema = new mongoose.Schema({
 		type: String,
 		required: true
 	},
+	budget: {
+		type: Number,
+		required: true,
+		default: 2000
+	},
 	savedCat: [{
 		type: String,
 		required: false
@@ -131,6 +136,10 @@ var budgetSchema = new mongoose.Schema({
 		type: [Number],
 		required: true
 	},
+	categoryExpense: {
+		type: [Number],
+		required: true
+	},
 	month: {
 		type: Number,
 		required: true,
@@ -151,7 +160,7 @@ var budgetSchema = new mongoose.Schema({
     		message: '{VALUE} is not a year value'
   		}
 	},
-	changed: {
+	needsUpdate: {
 		type: Boolean,
 		required: true
 	},
