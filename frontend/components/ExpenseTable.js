@@ -29,7 +29,9 @@ export default class extends React.Component {
 	        edit: false,
 	        editID: "",
 	        delete: false,
-	        url: Config.api + '/expenses/' + this.props.username + '?sort=date'
+	        url: Config.api + '/expenses/' + this.props.username + '?sort=date',
+	        page: 1,
+	        pages: 0
 	    };
   	}
 
@@ -56,6 +58,7 @@ export default class extends React.Component {
 					comment: this.refs.comment.value
 				})
 			})
+	    	.then(() => this.updateExpenses())
 			.catch(function(err) {
 				Router.push('/login');
 			})
@@ -93,9 +96,10 @@ export default class extends React.Component {
 	    	fetch(Config.api + '/expenses/' + this.props.username + '/' + this.state.editID, {
 				method: 'put',
 				mode: 'cors',
-				headers: {'Content-Type':'application/json', 'x-access-token': this.props.token},
+				headers: {'Content-Type':'application/json', 'x-access-token':this.props.token},
 				body: JSON.stringify(changed)
 			})
+			.then(() => this.updateExpenses())
 			.catch(function(err) {
 				Router.push('/login');
 			})
@@ -126,18 +130,20 @@ export default class extends React.Component {
 				mode: 'cors',
 				headers: {'Content-Type':'application/json', 'x-access-token': this.props.token},
 			})
+			.then(() => this.updateExpenses())
 			.catch(function(err) {
 				Router.push('/login');
 			})
 	    } else {
-			for(var i = 0; i < this.state.header.length; i++) {
-				this.refs[this.state.header[i].toLowerCase()].value = ""
+	    	if(!this.state.edit) {
+				for(var i = 0; i < this.state.header.length; i++) {
+					this.refs[this.state.header[i].toLowerCase()].value = ""
+				}
 			}
 			this.setState({
 	  			edit: true,
 	  			editID: id
 	  		})
-
 		}
 	}
 
@@ -160,7 +166,9 @@ export default class extends React.Component {
   	componentDidMount() {
   		this.setState({
   			loaded: true
-  		})
+  		}, function() {
+			this.updateExpenses()
+		})
   	}
 
   	sortFilter(e) {
@@ -190,32 +198,37 @@ export default class extends React.Component {
 
 		this.setState({
 			url: url
+		}, function() {
+			this.updateExpenses()
 		})
 	}
 
-	render() {
-		fetch(this.state.url, {
+	updateExpenses() {
+		fetch(this.state.url + "&page=" + this.state.page, {
 			method: 'get',
 			mode: 'cors',
 			headers: {'Content-Type':'application/json', 'x-access-token': this.props.token},
 		})
 		.then((res) => res.json())
 		.then((data) => this.setState({
-			data: data
+			data: data.data,
+			pages: data.pages
 		}))
 		.catch(function(err) {
-			console.log(err)
 			Router.push('/login');
 		})
+	}
 
+	render() {
 	    return (
 	    	<div>
+	    		{Array(this.state.pages).fill(1).map((item, i) => <button className="pageButton" onClick={() => this.setState({ page: i + 1 }, function() { this.updateExpenses() })}>{i + 1}</button>)}
 	    		<div className="dropdown">
 		    		<button className="dropButton">Sort/Filter</button>
 		    		<form onSubmit={this.sortFilter} className="sortFilter">
 		    			<div className="headerMenu">Sort by</div>
-						<select id="sort" name="sort" ref="sortBy">
-							<option value="date" selected="selected">Date</option>
+						<select id="sort" name="sort" ref="sortBy" defaultValue="date">
+							<option value="date">Date</option>
 							<option value="price">Price</option>
 							<option value="size">Size</option>
 						</select><br/>
@@ -256,7 +269,10 @@ export default class extends React.Component {
 					</table>
 				</form>
 				<style jsx>{`
-
+					.pageButton {
+						margin-top: 5px;
+						margin-left: 2px;
+					}
 
 					.headerMenu {
 						background-color: black;
@@ -291,6 +307,7 @@ export default class extends React.Component {
 
 					.expense {
 						width: 100%;
+						overflow: auto;
 					}
 
 					table {
@@ -298,11 +315,12 @@ export default class extends React.Component {
 					    border-collapse: collapse;
 					    width: 100%;
 					   	font-size: 12px;
+					   	text-align: center;
 					}
 
 					tbody {
 						display: block;
-        				overflow-x: auto;
+        				overflow: auto;
 					}
 
 					td, th {

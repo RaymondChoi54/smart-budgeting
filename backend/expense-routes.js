@@ -6,17 +6,14 @@ exports.createExpense = function(req, res) {
 	const newExpense = new Expense(req.body);
 	newExpense.save((err) => {
 		if(err) {
-			return res.status(500).send("Error: Could not create an expense");
+			return res.status(500).send({ auth: true, message: "Error: Could not create an expense"});
 		} else {
-			return res.sendStatus(200);
+			return res.send({ auth: true, message: "Success"});
 		}
 	});
 }
 
-// Query for expenses
-// Sort by price, date, and size
-// Filter by username, store, brand, item, date, date range, and category
-exports.getExpenses = function(req, res) {
+function queryProcess(req) {
 	var query = Expense.where('username').equals(req.params.username);
 	// Filter by
 	if(req.query.store) {
@@ -40,13 +37,50 @@ exports.getExpenses = function(req, res) {
 		query = query.sort(req.query.sort);
 	}
 
-	query.exec(function(err, result) {
-		if(err) {
-			return res.status(500).send("Error: Could not query");
-		} else {
-			return res.send(result);
-		}
-	});
+	return query
+}
+
+// Query for expenses
+// Sort by price, date, and size
+// Filter by username, store, brand, item, date, date range, and category
+exports.getExpenses = function(req, res) {
+	if(req.query.page) {
+		queryProcess(req).countDocuments({}, function(err, count) {
+			if(err) {
+				return res.status(500).send({ auth: true, message: "Error: Could not query"});
+			} else {
+				query = queryProcess(req)
+
+				// Skip and limit
+				if(req.query.page) {
+					query = query.skip(20 * (req.query.page - 1)).limit(20)
+				}
+
+				query.exec(function(err, result) {
+					if(err) {
+						return res.status(500).send({ auth: true, message: "Error: Could not query"});
+					} else {
+						return res.send({
+							data: result, 
+							pages: Math.ceil(count / 20),
+							expenses: count
+						});
+					}
+				});
+			}
+		});
+	} else {
+		queryProcess(req).exec(function(err, result) {
+			if(err) {
+				return res.status(500).send({ auth: true, message: "Error: Could not query"});
+			} else {
+				return res.send({
+					data: result,
+					pages: 1
+				});
+			}
+		});
+	}
 }
 
 // Change the category, store, item, price, brand, size, unit, date, or comment of an expense given the id
@@ -84,7 +118,7 @@ exports.putExpense = function(req, res) {
 		if(err) {
 			return res.status(500).send({ auth: true, message: "Error: Could not get the expense" });
 		}
-		return res.status(200).send('Success: Expense has been updated');
+		return res.status(200).send({ auth: true, message: 'Success: Expense has been updated' });
 	});
 }
 
@@ -94,7 +128,7 @@ exports.deleteExpense = function(req, res) {
 		if(err) {
 			 return res.status(500).send({ auth: true, message: "Error: failed to delete"})
 		} else {
-			return res.status(200).send('Success');
+			return res.status(200).send({ auth: true, message: 'Success'});
 		}
 	});
 }
