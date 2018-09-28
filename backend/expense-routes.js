@@ -33,7 +33,7 @@ exports.getExpenses = function(req, res) {
 	}
 	// Date range
 	if(req.query.startdate && req.query.enddate) {
-		query = query.where('date').gt(req.query.startdate).lt(req.query.enddate)
+		query = query.where('date').gte(req.query.startdate).lt(req.query.enddate)
 	}
 	// Sort by
 	if(req.query.sort) {
