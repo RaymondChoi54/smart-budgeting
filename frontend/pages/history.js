@@ -15,6 +15,9 @@ const names = [
 	{ id: 'logout', name: 'Logout', on: false}
 ];
 
+const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+const year = 2018
+
 export default class extends React.Component {
 	constructor(props) {
     	super(props)
@@ -38,18 +41,16 @@ export default class extends React.Component {
 
 	render() {
 		return (
-	    	<LayoutBar config={names} name={this.state.fullname} barName="Current Monthly Expenses">
-		        <Window barName="Budget History for 2018">
-		        	<div className="innerWindow">
-			        	<Window barName="Jan Budget History">
-			        		Hello
-			        	</Window>
-		        	</div>
-		        	<div className="innerWindow">
-			        	<Window barName="Jan Budget History">
-			        		Hello
-			        	</Window>
-		        	</div>
+	    	<LayoutBar config={names} name={this.state.fullname}>
+		        <Window barName={"Budget History for " + year}>
+		        	{months.map((month, index) => (
+		        		<div className="innerWindow">
+				        	<Window barName={month + " Budget History"}>
+				        		Hello
+				        	</Window>
+			        	</div>
+
+		        	))}
 		        </Window>
 				<style jsx>{`
 					.innerWindow {
