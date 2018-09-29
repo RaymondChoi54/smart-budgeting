@@ -353,7 +353,7 @@ export default class extends React.Component {
 							</select><br/>
 							<div className="headerMenu">Order by</div>
 							<select id="order" name="order" ref="orderBy" defaultValue="des">
-								<option value="dec">Decending</option>
+								<option value="desc">Descending</option>
 								<option value="asc">Ascending</option>
 							</select><br/>
 							<div className="headerMenu">Filter by</div>

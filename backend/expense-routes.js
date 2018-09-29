@@ -37,7 +37,11 @@ function queryProcess(req) {
 	}
 	// Sort by
 	if(req.query.sort) {
-		query = query.sort(req.query.sort);
+		if(req.query.orderby == 'desc') {
+			query = query.sort('-' + req.query.sort);
+		} else {
+			query = query.sort(req.query.sort);
+		}
 	}
 
 	return query
