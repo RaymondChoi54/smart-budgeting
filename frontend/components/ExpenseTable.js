@@ -394,6 +394,8 @@ export default class extends React.Component {
 				</div>
 				<style jsx>{`
 					.space {
+						font-family: sans-serif;
+						font-size: 13px;
 						display: -webkit-flex;
 					    -webkit-flex-flow: wrap;
 					    display: flex;
