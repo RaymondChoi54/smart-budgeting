@@ -215,6 +215,9 @@ export default class extends React.Component {
 		if(this.refs.dateMin.value && this.refs.dateMax.value) {
 			url = url + '&startdate=' + this.refs.dateMin.value + '&enddate=' + this.refs.dateMax.value
 		}
+		if(this.refs.orderBy.value) {
+			url = url + '&orderby=' + this.refs.orderBy.value
+		}
 
 		if(e) {
 			this.setState({
@@ -300,7 +303,6 @@ export default class extends React.Component {
 	}
 
 	render() {
-
 		const options = {
 		    legend: {
 		        display: false,
@@ -348,6 +350,11 @@ export default class extends React.Component {
 								<option value="date">Date</option>
 								<option value="price">Price</option>
 								<option value="size">Size</option>
+							</select><br/>
+							<div className="headerMenu">Order by</div>
+							<select id="order" name="order" ref="orderBy" defaultValue="des">
+								<option value="dec">Decending</option>
+								<option value="asc">Ascending</option>
 							</select><br/>
 							<div className="headerMenu">Filter by</div>
 							<select ref="categoryFilter">
