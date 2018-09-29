@@ -30,7 +30,7 @@ function update(username, month, year, callback) {
 			for(var i = 0; i < result.length; i++) {
 				updater.expense += result[i].price
 				updater.categoryExpense[result[i].category] += result[i].price
-				updater.dailyExpense[new Date(result[i].date).getDate()] += result[i].price
+				updater.dailyExpense[parseInt(result[i].date.toUTCString().split(" ")[1]) - 1] += result[i].price
 			}
 
 			// Find the budget to update and update budget based on expenses

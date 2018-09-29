@@ -2,6 +2,7 @@ import React from 'react'
 import Cookies from 'js-cookie'
 import Config from '../config'
 import fetch from 'node-fetch'
+import {PieChart, Legend, BarChart} from 'react-easy-chart';
 
 import LayoutBar from '../components/LayoutBar'
 
@@ -37,7 +38,13 @@ export default class extends React.Component {
 	        delete: false,
 	        url: Config.api + '/expenses/' + this.props.username + '?sort=date',
 	        page: 1,
-	        pages: 0
+	        pages: 0,
+	        budget: {
+	        	budget: 0,
+	        	expense: 0,
+	        	categoryExpense: [],
+				dailyExpense: []
+	        }
 	    };
   	}
 
@@ -223,66 +230,226 @@ export default class extends React.Component {
 		.catch(function(err) {
 			Router.push('/login');
 		})
+
+		fetch(Config.api + '/budget/' + this.props.username + '/2018/9', {
+			method: 'get',
+			mode: 'cors',
+			headers: {'Content-Type':'application/json', 'x-access-token': this.props.token},
+		})
+		.then((res) => res.json())
+		.then((data) => this.setState({
+			budget: data
+		}))
+		.catch(function(err) {
+			console.log(err)
+			Router.push('/login');
+		})
+	}
+
+	categoryPie() {
+		var data = []
+		var colors = ["red", "green", "blue", "yellow", "orange", "brown", "olive", "violet", "aqua", "gold", "tan", "lime", "salmon", "grey"]
+
+		if(this.state.budget.categoryExpense.length == 0) {
+			return [{value: 0}]
+		}
+
+		for(var i = 0; i < this.state.budget.categoryExpense.length; i++) {
+			let temp = {}
+			if(this.state.budget.categoryExpense[i] != 0) {
+				temp.value = this.state.budget.categoryExpense[i]
+				temp.color = colors[i]
+				temp.key = Config.categories[i]
+				data.push(temp)
+			}
+		}
+		return data
+	}
+
+	expenseBar() {
+		var data = []
+
+		if(this.state.budget.dailyExpense.length == 0) {
+			for(var i = 0; i < 28; i++) {
+				data.push({x: 0, y: 0})
+			}
+			return data
+		}
+
+		for(var i = 0; i < this.state.budget.dailyExpense.length; i++) {
+			let temp = {}
+			temp.x = i + 1
+			temp.y = this.state.budget.dailyExpense[i]
+			data.push(temp)
+		}
+
+		return data
 	}
 
 	render() {
+		var categoryData = this.categoryPie();
+
 	    return (
-	    	<div>
-	    		{Array(this.state.pages).fill(1).map((item, i) => <button className="pageButton" onClick={() => this.setState({ page: i + 1 }, function() { this.updateExpenses() })}>{i + 1}</button>)}
-	    		<div className="dropdown">
-		    		<button className="dropButton">Sort/Filter</button>
-		    		<form onSubmit={this.sortFilter} className="sortFilter">
-		    			<div className="headerMenu">Sort by</div>
-						<select id="sort" name="sort" ref="sortBy" defaultValue="date">
-							<option value="date">Date</option>
-							<option value="price">Price</option>
-							<option value="size">Size</option>
-						</select><br/>
-						<div className="headerMenu">Filter by</div>
-						<select ref="categoryFilter">
-							<option value="">Category</option>
-							{Config.categories.map((name, index) => <option value={index}>{name}</option>)}
-						</select>
-						<input type="text" ref="storeFilter" placeholder="store"/>
-						<input type="text" ref="itemFilter" placeholder="item"/>
-						<input type="number" ref="priceFilter" placeholder="price"/>
-						<input type="text" ref="brandFilter" placeholder="brand"/><br/>
-						<div className="headerMenu">Date range</div>
-						<input type="date" ref="dateMin"/>
-						<input type="date" ref="dateMax"/>
-						<input type="submit" value="Submit"/>
+	    	<div className="space">
+
+		    	<div className="window barChart">
+	    			<div className="bar">Daily Expenses</div>
+	    			<div className="barDiv">
+			    		<BarChart
+    						axes
+    						axisLabels={{x: 'Day', y: 'Total Expenses'}}
+						    colorBars
+						    grid
+						    height={230}
+						    width={900}
+						    data={this.expenseBar()}
+						    margin={{top: 20, right: 40, bottom: 40, left: 40}}
+						 />
+					</div>
+	    		</div>
+
+	    		<div className="window pie">
+	    			<div className="bar">Budget & Total Expenses</div>
+	    			<div className="pieDiv">
+		    			<PieChart
+						    size={200}
+						    innerHoleSize={100}
+						    data={[
+						     	{ value: this.state.budget.budget - this.state.budget.expense, color: 'red' },
+						     	{ value: this.state.budget.expense, color: 'blue' }
+						    ]}
+						/>
+						<Legend data={[
+					     	{ key: 'Remaining Budget: ' + (this.state.budget.budget - this.state.budget.expense)},
+					     	{ key: 'Expenses: ' + this.state.budget.expense}
+							]} dataId={'key'} horizontal
+							config = {[{color: 'red'}, {color: 'blue'}]}
+						/>
+					</div>
+	    		</div>
+
+				<div className="window pie">
+	    			<div className="bar">Expenses By Category</div>
+	    			<div className="pieDiv">
+		    			<PieChart size={200} innerHoleSize={100} data={categoryData}/>
+						<Legend data={categoryData} dataId={'key'} horizontal config={categoryData}/>
+					</div>
+	    		</div>
+
+	    		<div className="window">
+	    			<div className="bar">Current Monthly Expenses</div>
+		    		{Array(this.state.pages).fill(1).map((item, i) => <button key={i} className="pageButton" onClick={() => this.setState({ page: i + 1 }, function() { this.updateExpenses() })}>{i + 1}</button>)}
+		    		<div className="dropdown">
+			    		<button className="dropButton">Sort/Filter</button>
+			    		<form onSubmit={this.sortFilter} className="sortFilter">
+			    			<div className="headerMenu">Sort by</div>
+							<select id="sort" name="sort" ref="sortBy" defaultValue="date">
+								<option value="date">Date</option>
+								<option value="price">Price</option>
+								<option value="size">Size</option>
+							</select><br/>
+							<div className="headerMenu">Filter by</div>
+							<select ref="categoryFilter">
+								<option value="">Category</option>
+								{Config.categories.map((name, index) => <option key={index} value={index}>{name}</option>)}
+							</select>
+							<input type="text" ref="storeFilter" placeholder="store"/>
+							<input type="text" ref="itemFilter" placeholder="item"/>
+							<input type="number" ref="priceFilter" placeholder="price"/>
+							<input type="text" ref="brandFilter" placeholder="brand"/><br/>
+							<div className="headerMenu">Date range</div>
+							<input type="date" ref="dateMin"/>
+							<input type="date" ref="dateMax"/>
+							<input type="submit" value="Submit"/>
+						</form>
+					</div>
+
+			    	<form className="expense" onSubmit={this.handleSubmit}>
+				    	<table>
+							<tbody>
+								<tr className="notEdit">
+									<td>
+										<select ref="category">
+											{Config.categories.map((name, index) => <option key={index} value={index}>{name}</option>)}
+										</select>
+									</td>
+						            <td><input type="text" ref="store" placeholder="store"/></td>
+						            <td><input type="text" ref="item" placeholder="item"/></td>
+						            <td><input type="number" ref="price" placeholder="price"/></td>
+						            <td><input type="text" ref="brand" placeholder="brand"/></td>
+						            <td><input type="number" ref="size" placeholder="size"/></td>
+						            <td><input type="text" ref="unit" placeholder="unit"/></td>
+						            <td><input type="date" ref="date"/></td>
+						            <td><input type="text" ref="comment" placeholder="comment"/></td>
+						            <td><input type="submit" value="Submit"/></td>
+						        </tr>
+								<tr className="notEdit">
+									{this.state.header.map((element, index) => <th key={index}>{element}</th>)}
+									<td><button onClick={(e) => this.editDeleteButton(e)}>Edit/Delete</button></td>
+								</tr>
+								{this.state.data.map((row, x) => <tr key={x} className={this.editClass(row._id)}>{this.state.header.map((element, y) => <td key={x + "," + y}>{convert(row, element)}</td>)}<td><button className="editBut" onClick={(e) => this.editButton(e, row._id)}>{this.editDelete()}</button></td></tr>)}
+							</tbody>
+						</table>
 					</form>
 				</div>
-
-		    	<form className="expense" onSubmit={this.handleSubmit}>
-			    	<table>
-						<tbody>
-							<tr className="notEdit">
-								<td>
-									<select ref="category">
-										{Config.categories.map((name, index) => <option value={index}>{name}</option>)}
-									</select>
-								</td>
-					            <td><input type="text" ref="store" placeholder="store"/></td>
-					            <td><input type="text" ref="item" placeholder="item"/></td>
-					            <td><input type="number" ref="price" placeholder="price"/></td>
-					            <td><input type="text" ref="brand" placeholder="brand"/></td>
-					            <td><input type="number" ref="size" placeholder="size"/></td>
-					            <td><input type="text" ref="unit" placeholder="unit"/></td>
-					            <td><input type="date" ref="date"/></td>
-					            <td><input type="text" ref="comment" placeholder="comment"/></td>
-					            <td><input type="submit" value="Submit"/></td>
-					        </tr>
-							<tr className="notEdit">
-								{this.state.header.map((element, index) => <th key={index}>{element}</th>)}
-								<td><button onClick={(e) => this.editDeleteButton(e)}>Edit/Delete</button></td>
-							</tr>
-							{this.state.data.map((row, x) => <tr key={x} className={this.editClass(row._id)}>{this.state.header.map((element, y) => <td key={x + "," + y}>{convert(row, element)}</td>)}<td><button className="editBut" onClick={(e) => this.editButton(e, row._id)}>{this.editDelete()}</button></td></tr>)}
-						</tbody>
-					</table>
-				</form>
 				<style jsx>{`
+					.space {
+						display: -webkit-flex;
+					    -webkit-flex-flow: wrap;
+					    display: flex;
+					    flex-flow: wrap;
+					    width: 100%;
+					}
+
+					.pie {
+						max-width: calc(50% - 10px);
+						width: 50%;
+						margin-bottom: 20px;
+						margin-right: 20px;
+					}
+
+					.barChart {
+						margin-bottom: 20px;
+					}
+
+					.pie:nth-child(odd) {
+						margin-right: 0px;
+					}
+
+					@media screen and (max-width: 1000px) {
+						.pie {
+							margin-right: 0px;
+							max-width: 100%;
+							width: 100%;
+						}
+					}
+
+					.pieDiv {
+						overflow: auto;
+					}
+
+					.barDiv {
+						overflow: auto;
+					}
+
+					.bar {
+						background: black;
+						color: white;
+						padding: 8px;
+						border-radius: 1px;
+						text-align: left;
+					}
+
+					.window {
+						text-align: center;
+						background: rgba(254, 254, 254, 0.8);
+						box-shadow: 0px 0px 4px #888888;
+						width: 100%;
+						display: block;
+					}
+
 					.pageButton {
+						float: left;
 						margin-top: 5px;
 						margin-left: 2px;
 					}
@@ -332,7 +499,6 @@ export default class extends React.Component {
 					}
 
 					tbody {
-						display: block;
         				overflow: auto;
 					}
 
@@ -343,7 +509,7 @@ export default class extends React.Component {
 					}
 
 					tr.notEdit:nth-child(even) {
-						background: #CCC
+						background: #CCC;
 					}
 
 					.edit {
