@@ -2,7 +2,7 @@ import React from 'react'
 import Cookies from 'js-cookie'
 import Config from '../config'
 import fetch from 'node-fetch'
-import {PieChart, Legend, BarChart} from 'react-easy-chart';
+import {Doughnut, Bar} from 'react-chartjs-2';
 
 import LayoutBar from '../components/LayoutBar'
 
@@ -24,6 +24,10 @@ function convert(row, element) {
 	}
 }
 
+function daysInMonth(month, year) {
+    return new Date(year, month, 0).getDate();
+}
+
 export default class extends React.Component {
 	constructor(props) {
     	super(props)
@@ -42,9 +46,11 @@ export default class extends React.Component {
 	        budget: {
 	        	budget: 0,
 	        	expense: 0,
-	        	categoryExpense: [],
+	        	categoryExpense: Array(Config.categories.length).fill(0),
 				dailyExpense: []
-	        }
+	        },
+	        dateMin: this.props.year + "-" + ("0" + this.props.month).slice(-2) + "-01",
+	        dateMax: this.props.year + "-" + ("0" + this.props.month).slice(-2) + "-" + daysInMonth(this.props.year, this.props.month)
 	    };
   	}
 
@@ -185,7 +191,9 @@ export default class extends React.Component {
   	}
 
   	sortFilter(e) {
-		e.preventDefault();
+  		if(e) {
+			e.preventDefault();
+		}
 
 		var url = Config.api + '/expenses/' + this.props.username + '?sort=' + this.refs.sortBy.value
 
@@ -204,20 +212,23 @@ export default class extends React.Component {
 		if(this.refs.brandFilter.value) {
 			url = url + '&brand=' + this.refs.brandFilter.value
 		}
-
 		if(this.refs.dateMin.value && this.refs.dateMax.value) {
 			url = url + '&startdate=' + this.refs.dateMin.value + '&enddate=' + this.refs.dateMax.value
 		}
 
-		this.setState({
-			url: url
-		}, function() {
-			this.updateExpenses()
-		})
+		if(e) {
+			this.setState({
+				url: url
+			}, function() {
+				this.updateExpenses()
+			})
+		} else {
+			return url
+		}
 	}
 
 	updateExpenses() {
-		fetch(this.state.url + "&page=" + this.state.page, {
+		fetch(this.sortFilter(), {
 			method: 'get',
 			mode: 'cors',
 			headers: {'Content-Type':'application/json', 'x-access-token': this.props.token},
@@ -231,7 +242,7 @@ export default class extends React.Component {
 			Router.push('/login');
 		})
 
-		fetch(Config.api + '/budget/' + this.props.username + '/2018/9', {
+		fetch(Config.api + '/budget/' + this.props.username + '/' + this.props.year + '/' + this.props.month, {
 			method: 'get',
 			mode: 'cors',
 			headers: {'Content-Type':'application/json', 'x-access-token': this.props.token},
@@ -246,93 +257,83 @@ export default class extends React.Component {
 		})
 	}
 
-	categoryPie() {
-		var data = []
-		var colors = ["red", "green", "blue", "yellow", "orange", "brown", "olive", "violet", "aqua", "gold", "tan", "lime", "salmon", "grey"]
-
-		if(this.state.budget.categoryExpense.length == 0) {
-			return [{value: 0}]
+	dataToBarData(data) {
+		var temp = new Array(data.length)
+		for(var i = 0; i < data.length; i++) {
+			temp[i] = i + 1
 		}
 
-		for(var i = 0; i < this.state.budget.categoryExpense.length; i++) {
-			let temp = {}
-			if(this.state.budget.categoryExpense[i] != 0) {
-				temp.value = this.state.budget.categoryExpense[i]
-				temp.color = colors[i]
-				temp.key = Config.categories[i]
-				data.push(temp)
-			}
-		}
-		return data
+		return {
+		  labels: temp,
+		  datasets: [
+		    {
+		      backgroundColor: 'rgba(255,99,132,0.2)',
+		      borderColor: 'rgba(255,99,132,1)',
+		      borderWidth: 1,
+		      hoverBackgroundColor: 'rgba(255,99,132,0.4)',
+		      hoverBorderColor: 'rgba(255,99,132,1)',
+		      data: data
+		    }
+		  ]
+		};
 	}
 
-	expenseBar() {
-		var data = []
+	dataToPieData(labels, data) {
+		var tempLabel = []
+		var tempData = []
 
-		if(this.state.budget.dailyExpense.length == 0) {
-			for(var i = 0; i < 28; i++) {
-				data.push({x: 0, y: 0})
+		for(var i = 0; i < data.length; i++) {
+			if(data[i] != 0) {
+				tempLabel.push(labels[i])
+				tempData.push(data[i])
 			}
-			return data
 		}
 
-		for(var i = 0; i < this.state.budget.dailyExpense.length; i++) {
-			let temp = {}
-			temp.x = i + 1
-			temp.y = this.state.budget.dailyExpense[i]
-			data.push(temp)
+		return {
+			labels: tempLabel,
+			datasets: [{
+				data: tempData,
+				backgroundColor: ["green", "red", "blue", "yellow", "orange", "brown", "olive", "violet", "aqua", "gold", "tan", "lime", "salmon", "grey"],
+				hoverBackgroundColor: ["green", "red", "blue", "yellow", "orange", "brown", "olive", "violet", "aqua", "gold", "tan", "lime", "salmon", "grey"]
+			}]
 		}
-
-		return data
 	}
 
 	render() {
-		var categoryData = this.categoryPie();
+
+		const options = {
+		    legend: {
+		        display: false,
+		    },
+		};
 
 	    return (
 	    	<div className="space">
-
 		    	<div className="window barChart">
 	    			<div className="bar">Daily Expenses</div>
 	    			<div className="barDiv">
-			    		<BarChart
-    						axes
-    						axisLabels={{x: 'Day', y: 'Total Expenses'}}
-						    colorBars
-						    grid
-						    height={230}
-						    width={900}
-						    data={this.expenseBar()}
-						    margin={{top: 20, right: 40, bottom: 40, left: 40}}
-						 />
+		    			<Bar
+				          data={this.dataToBarData(this.state.budget.dailyExpense)}
+				          width={100}
+				          height={300}
+				          options={
+				          	{ maintainAspectRatio: false, legend: { display: false }}
+				          }
+				        />
 					</div>
 	    		</div>
 
 	    		<div className="window pie">
 	    			<div className="bar">Budget & Total Expenses</div>
 	    			<div className="pieDiv">
-		    			<PieChart
-						    size={200}
-						    innerHoleSize={100}
-						    data={[
-						     	{ value: this.state.budget.budget - this.state.budget.expense, color: 'red' },
-						     	{ value: this.state.budget.expense, color: 'blue' }
-						    ]}
-						/>
-						<Legend data={[
-					     	{ key: 'Remaining Budget: ' + (this.state.budget.budget - this.state.budget.expense)},
-					     	{ key: 'Expenses: ' + this.state.budget.expense}
-							]} dataId={'key'} horizontal
-							config = {[{color: 'red'}, {color: 'blue'}]}
-						/>
+						<Doughnut data={this.dataToPieData(['Remaining Budget', 'Total Expenses'], [(this.state.budget.budget - this.state.budget.expense), this.state.budget.expense])}/>
 					</div>
 	    		</div>
 
 				<div className="window pie">
 	    			<div className="bar">Expenses By Category</div>
 	    			<div className="pieDiv">
-		    			<PieChart size={200} innerHoleSize={100} data={categoryData}/>
-						<Legend data={categoryData} dataId={'key'} horizontal config={categoryData}/>
+		    			<Doughnut data={this.dataToPieData(Config.categories, this.state.budget.categoryExpense)} options={options}/>
 					</div>
 	    		</div>
 
@@ -358,8 +359,8 @@ export default class extends React.Component {
 							<input type="number" ref="priceFilter" placeholder="price"/>
 							<input type="text" ref="brandFilter" placeholder="brand"/><br/>
 							<div className="headerMenu">Date range</div>
-							<input type="date" ref="dateMin"/>
-							<input type="date" ref="dateMax"/>
+							<input type="date" ref="dateMin" defaultValue={this.state.dateMin}/>
+							<input type="date" ref="dateMax" defaultValue={this.state.dateMax}/>
 							<input type="submit" value="Submit"/>
 						</form>
 					</div>
@@ -428,10 +429,12 @@ export default class extends React.Component {
 
 					.pieDiv {
 						overflow: auto;
+						margin: 10px;
 					}
 
 					.barDiv {
 						overflow: auto;
+						margin: 10px;
 					}
 
 					.bar {
