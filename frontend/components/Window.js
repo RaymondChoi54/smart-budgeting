@@ -1,7 +1,9 @@
 const Window = (props) => (
-	<div className="window">
+	<div>
 		<div className="bar">{props.barName}</div>
-	    {props.children}
+			<div className="window">
+		    	{props.children}
+		    </div>
 		<style jsx>{`
 			.bar {
 				background: black;
@@ -9,14 +11,14 @@ const Window = (props) => (
 				padding: 8px;
 				border-radius: 1px;
 				text-align: left;
+				width: calc(100% - 16px);
 			}
 
 			.window {
 				text-align: center;
 				background: rgba(254, 254, 254, 0.8);
 				box-shadow: 0px 0px 4px #888888;
-				width: 100%;
-				display: block;
+				overflow: auto;
 			}
 		`}</style>
 

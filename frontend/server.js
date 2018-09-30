@@ -9,11 +9,11 @@ app.prepare()
 .then(() => {
     const server = express();
 
-    // server.get('/p/:id', (req, res) => {
-    //     const actualPage = '/post'
-    //     const queryParams = { id: req.params.id }
-    //     app.render(req, res, actualPage, queryParams)
-    // })
+    server.get('/budget/:year/:month', (req, res) => {
+        const actualPage = '/budget'
+        const queryParams = { year: req.params.year, month: req.params.month }
+        app.render(req, res, actualPage, queryParams)
+    })
 
     server.get('/', (req, res) => {
         const actualPage = '/login';

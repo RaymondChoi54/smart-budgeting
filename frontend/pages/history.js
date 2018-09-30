@@ -2,8 +2,8 @@ import React from 'react'
 import Cookies from 'js-cookie'
 
 import LayoutBar from '../components/LayoutBar'
-import ExpenseTable from '../components/ExpenseTable'
 import Window from '../components/Window'
+import RecentTable from '../components/RecentTable'
 
 import Router from 'next/router'
 
@@ -26,7 +26,6 @@ export default class extends React.Component {
 	        username: Cookies.get('username'),
 	        token: Cookies.get('token'),
 	        loaded: false,
-	        data: []
 	    };
   	}
 
@@ -42,23 +41,36 @@ export default class extends React.Component {
 	render() {
 		return (
 	    	<LayoutBar config={names} name={this.state.fullname}>
-		        <Window barName={"Budget History for " + year}>
-		        	{months.map((month, index) => (
-		        		<div className="innerWindow">
-				        	<Window barName={month + " Budget History"}>
-				        		Hello
-				        	</Window>
-			        	</div>
-
-		        	))}
-		        </Window>
+	    		<div className="container">
+			        <Window barName={"Budget History for " + year}>
+			        	{months.map((month, index) => (
+			        		<div key={index} className="innerWindow">
+					        	<Window key={index} barName={month + " Recent Budget History"}>
+					        		<RecentTable key={index} year={year} month={index + 1} token={this.state.token} username={this.state.username}/>
+					        		<button onClick={() => Router.push('/budget/' + year + '/' + (index + 1))}>Edit/View</button>
+					        	</Window>
+				        	</div>
+			        	))}
+			        </Window>
+		        </div>
 				<style jsx>{`
+					.container {
+						width: 100%;
+						overflow: auto;
+					}
+
 					.innerWindow {
 						padding: 25px;
+						font-family: sans-serif;
+						font-size: 13px;
 					}
 
 					.innerWindow:not(:last-child) {
 						padding-bottom: 0;
+					}
+
+					button {
+						margin: 5px;
 					}
 				`}</style>
 			</LayoutBar>

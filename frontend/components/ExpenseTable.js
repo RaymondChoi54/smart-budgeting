@@ -473,6 +473,7 @@ export default class extends React.Component {
 						margin: 0px;
 						padding: 0px;
 					}
+					
 					.dropdown {
 						width: 125px;
 						float: right;

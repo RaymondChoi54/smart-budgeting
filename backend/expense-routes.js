@@ -77,8 +77,15 @@ exports.getExpenses = function(req, res) {
 			}
 		});
 	} else {
-		queryProcess(req).exec(function(err, result) {
+		var query = queryProcess(req)
+
+		if(req.query.limit) {
+			query.limit(parseInt(req.query.limit))
+		}
+
+		query.exec(function(err, result) {
 			if(err) {
+				console.log(err)
 				return res.status(500).send({ auth: true, message: "Error: Could not query"});
 			} else {
 				return res.send({
