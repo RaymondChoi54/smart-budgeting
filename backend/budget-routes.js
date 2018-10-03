@@ -45,6 +45,22 @@ function update(username, month, year, callback) {
 	});
 }
 
+// Edit the budget
+exports.putBudget = function(req, res) {
+	var updater = {}
+	if(req.body.budget) {
+		updater.budget = req.body.budget
+	}
+
+	Budget.findOneAndUpdate({year: req.params.body, month: req.params.month, username: req.params.username}, updater, function(err) {
+		if(err) {
+			return res.status(400).send({auth: true, message: "Error: Please try again"});
+		} else {
+			return res.status(200).send({auth: true, message: "Success"})
+		}
+	});
+}
+
 // Set budget to require update, if budget doesn't exist do nothing
 exports.setUpdate = function(username, month, year, callback) {
 	var query = Budget.where('username').equals(username);

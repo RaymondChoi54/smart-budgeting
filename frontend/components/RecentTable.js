@@ -31,7 +31,8 @@ export default class extends React.Component {
 			headers: ["Category", "Store", "Item", "Price", "Brand", "Size", "Unit", "Date", "Comment"],
 			expenses: [],
 			dateMin: this.props.year + "-" + ("0" + this.props.month).slice(-2) + "-01",
-			dateMax: this.props.year + "-" + ("0" + this.props.month).slice(-2) + "-" + daysInMonth(this.props.year, this.props.month)
+			dateMax: this.props.year + "-" + ("0" + this.props.month).slice(-2) + "-" + daysInMonth(this.props.year, this.props.month),
+			year: this.props.year 
 		}
 	}
 
@@ -48,6 +49,39 @@ export default class extends React.Component {
 		.catch(function(err) {
 			console.log(err)
 		})
+	}
+
+	componentDidUpdate(prevProps) {
+		if(this.props.year != prevProps.year) {
+			fetch(Config.api + '/expenses/' + this.props.username + '/?sort=date&orderby=desc&limit=4&startdate=' + this.state.dateMin + '&enddate=' + this.state.dateMax, {
+				method: 'get',
+				mode: 'cors',
+				headers: {'Content-Type':'application/json', 'x-access-token': this.props.token}
+			})
+			.then((res) => res.json())
+			.then((data) => this.setState({
+				expenses: data.data
+			}))
+			.catch(function(err) {
+				console.log(err)
+			})
+		}
+	}
+
+	static getDerivedStateFromProps(props, state) {
+		if(props.year != state.year) {
+
+			var minDate = props.year + "-" + ("0" + props.month).slice(-2) + "-01"
+			var maxDate = props.year + "-" + ("0" + props.month).slice(-2) + "-" + daysInMonth(props.year, props.month)
+
+			return {
+				dateMin: minDate,
+				dateMax: maxDate,
+				year: props.year
+			}
+		} else {
+			return null
+		}
 	}
 
 	render() {

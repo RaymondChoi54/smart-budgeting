@@ -302,6 +302,15 @@ export default class extends React.Component {
 		}
 	}
 
+	editBudget() {
+	    var input = prompt("The current budget is:", this.state.budget.budget);
+	    if (input == null || input == "") {
+	        return
+	    } else {
+	       console.log(input)
+	    }
+	}
+
 	render() {
 		const options = {
 		    legend: {
@@ -326,7 +335,7 @@ export default class extends React.Component {
 	    		</div>
 
 	    		<div className="window pie">
-	    			<div className="bar">Budget & Total Expenses</div>
+	    			<div className="bar">Budget & Total Expenses<button className="editBudget" onClick={() => this.editBudget()}>Edit</button></div>
 	    			<div className="pieDiv">
 						<Doughnut data={this.dataToPieData(['Remaining Budget', 'Total Expenses'], [(this.state.budget.budget - this.state.budget.expense), this.state.budget.expense])}/>
 					</div>
@@ -543,6 +552,10 @@ export default class extends React.Component {
 
 					select {
 						width: 90%
+					}
+
+					.editBudget {
+						float: right;
 					}
 				`}</style>
 			</div>

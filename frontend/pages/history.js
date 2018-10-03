@@ -16,7 +16,7 @@ const names = [
 ];
 
 const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-const year = 2018
+const startYear = 2016
 
 export default class extends React.Component {
 	constructor(props) {
@@ -26,6 +26,7 @@ export default class extends React.Component {
 	        username: Cookies.get('username'),
 	        token: Cookies.get('token'),
 	        loaded: false,
+	        year: new Date(Date.now()).getFullYear()
 	    };
   	}
 
@@ -38,19 +39,28 @@ export default class extends React.Component {
   		})
   	}
 
+  	changeYear() {
+  		this.setState({
+  			year: this.refs.year.value
+  		})
+  	}
+
 	render() {
 		return (
 	    	<LayoutBar config={names} name={this.state.fullname}>
 	    		<div className="container">
-			        <Window barName={"Budget History for " + year}>
+			        <Window barName={"Budget History for " + this.state.year}>
 			        	{months.map((month, index) => (
 			        		<div key={index} className="innerWindow">
 					        	<Window key={index} barName={month + " Recent Budget History"}>
-					        		<RecentTable key={index} year={year} month={index + 1} token={this.state.token} username={this.state.username}/>
-					        		<button onClick={() => Router.push('/budget/' + year + '/' + (index + 1))}>Edit/View</button>
+					        		<RecentTable key={index} year={this.state.year} month={index + 1} token={this.state.token} username={this.state.username}/>
+					        		<button onClick={() => Router.push('/budget/' + this.state.year + '/' + (index + 1))}>Edit/View</button>
 					        	</Window>
 				        	</div>
 			        	))}
+			        	<select name="year" ref="year" onChange={() => this.changeYear()}>
+			        		{Array(new Date(Date.now()).getFullYear() - startYear + 2).fill(0).map((value, index) => (<option value={index + startYear} key={index}>{index + startYear}</option>))}
+			        	</select>
 			        </Window>
 		        </div>
 				<style jsx>{`
@@ -70,6 +80,10 @@ export default class extends React.Component {
 					}
 
 					button {
+						margin: 5px;
+					}
+
+					select {
 						margin: 5px;
 					}
 				`}</style>
