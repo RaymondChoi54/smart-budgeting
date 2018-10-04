@@ -308,6 +308,20 @@ export default class extends React.Component {
 	        return
 	    } else {
 	       console.log(input)
+	       fetch(Config.api + '/budget/' + this.props.username + '/' + this.props.year + '/' + this.props.month, {
+				method: 'put',
+				mode: 'cors',
+				headers: {'Content-Type':'application/json', 'x-access-token':this.props.token},
+				body: JSON.stringify({
+					budget: input
+				})
+			})
+	       	// .then((res) => res.json())
+	       	// .then((res) => console.log(res))
+			.then(() => this.updateExpenses())
+			.catch(function(err) {
+				Router.push('/login');
+			})
 	    }
 	}
 

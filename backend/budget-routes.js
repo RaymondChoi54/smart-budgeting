@@ -49,10 +49,10 @@ function update(username, month, year, callback) {
 exports.putBudget = function(req, res) {
 	var updater = {}
 	if(req.body.budget) {
-		updater.budget = req.body.budget
+		updater.budget = parseInt(req.body.budget)
 	}
 
-	Budget.findOneAndUpdate({year: req.params.body, month: req.params.month, username: req.params.username}, updater, function(err) {
+	Budget.findOneAndUpdate({year: req.params.year, month: req.params.month, username: req.params.username}, updater, function(err) {
 		if(err) {
 			return res.status(400).send({auth: true, message: "Error: Please try again"});
 		} else {
