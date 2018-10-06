@@ -164,6 +164,10 @@ var budgetSchema = new mongoose.Schema({
 		type: Boolean,
 		required: true
 	},
+	total: {
+		type: Number,
+		required: true
+	}
 }, {
     collection: 'Budget',
 });

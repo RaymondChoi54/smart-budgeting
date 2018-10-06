@@ -36,6 +36,7 @@ app.delete('/api/expenses/:username/:id', tokenCheck.tokenCheckUser, expense.del
 // Budget
 app.get('/api/budget/:username/:year/:month', tokenCheck.tokenCheckUser, budget.getBudget);
 app.put('/api/budget/:username/:year/:month', tokenCheck.tokenCheckUser, budget.putBudget);
+app.get('/api/budget/statistics/:username', tokenCheck.tokenCheckUser, budget.getBudgetStatistics);
 
 if(!module.parent) {
     app.listen(PORT, () => {

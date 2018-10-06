@@ -40,7 +40,7 @@ export default class extends React.Component {
 	        edit: false,
 	        editID: "",
 	        delete: false,
-	        url: Config.api + '/expenses/' + this.props.username + '?sort=date',
+	        url: Config.api + '/expenses/' + this.props.username + '?page=1&sort=date',
 	        page: 1,
 	        pages: 0,
 	        budget: {
@@ -195,7 +195,7 @@ export default class extends React.Component {
 			e.preventDefault();
 		}
 
-		var url = Config.api + '/expenses/' + this.props.username + '?sort=' + this.refs.sortBy.value
+		var url = Config.api + '/expenses/' + this.props.username + '?page=' + this.state.page + '&sort=' + this.refs.sortBy.value
 
 		if(this.refs.categoryFilter.value) {
 			url = url + '&category=' + this.refs.categoryFilter.value

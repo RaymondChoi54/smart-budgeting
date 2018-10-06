@@ -32,8 +32,11 @@ function queryProcess(req) {
 		query = query.where('price').equals(req.query.price)
 	}
 	// Date range
-	if(req.query.startdate && req.query.enddate) {
-		query = query.where('date').gte(req.query.startdate).lt(req.query.enddate)
+	if(req.query.startdate) {
+		query = query.where('date').gte(req.query.startdate)
+	}
+	if(req.query.enddate) {
+		query = query.where('date').lte(req.query.enddate)
 	}
 	// Sort by
 	if(req.query.sort) {
@@ -51,6 +54,12 @@ function queryProcess(req) {
 // Sort by price, date, and size
 // Filter by username, store, brand, item, date, date range, and category
 exports.getExpenses = function(req, res) {
+	var pageLimit = 20
+
+	if(req.query.pagelimit) {
+		pageLimit = parseInt(req.query.pagelimit)
+	}
+
 	if(req.query.page) {
 		queryProcess(req).countDocuments({}, function(err, count) {
 			if(err) {
@@ -60,7 +69,7 @@ exports.getExpenses = function(req, res) {
 
 				// Skip and limit
 				if(req.query.page) {
-					query = query.skip(20 * (req.query.page - 1)).limit(20)
+					query = query.skip(pageLimit * (req.query.page - 1)).limit(pageLimit)
 				}
 
 				query.exec(function(err, result) {
@@ -69,7 +78,7 @@ exports.getExpenses = function(req, res) {
 					} else {
 						return res.send({
 							data: result, 
-							pages: Math.ceil(count / 20),
+							pages: Math.ceil(count / pageLimit),
 							expenses: count
 						});
 					}
