@@ -36,7 +36,7 @@ function lastSixMonths(username, month, year) {
 
 // Days in the given month
 function daysInMonth(month, year) {
-    return new Date(year, month, 0).getDate();
+	return new Date(year, month, 0).getDate();
 }
 
 // Get all user budgets

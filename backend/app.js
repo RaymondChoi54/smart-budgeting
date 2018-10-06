@@ -39,7 +39,7 @@ app.put('/api/budget/:username/:year/:month', tokenCheck.tokenCheckUser, budget.
 app.get('/api/budget/statistics/:username', tokenCheck.tokenCheckUser, budget.getBudgetStatistics);
 
 if(!module.parent) {
-    app.listen(PORT, () => {
-        console.log(`Server listening on port ${PORT}`);
-    });
+	app.listen(PORT, () => {
+		console.log(`Server listening on port ${PORT}`);
+	});
 }

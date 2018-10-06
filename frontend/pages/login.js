@@ -5,10 +5,10 @@ import LoginBox from '../components/LoginBox'
 
 export default class extends React.Component {
 	render() {
-	    return (
-	      	<Layout>
+		return (
+			<Layout>
 				<LoginBox/>
 			</Layout>
-	    )
-  	}
+		)
+	}
 }

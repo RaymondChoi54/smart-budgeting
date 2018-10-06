@@ -25,43 +25,43 @@ function convert(row, element) {
 }
 
 function daysInMonth(month, year) {
-    return new Date(year, month, 0).getDate();
+	return new Date(year, month, 0).getDate();
 }
 
 export default class extends React.Component {
 	constructor(props) {
-    	super(props)
-    	this.handleSubmit = this.handleSubmit.bind(this)
-    	this.sortFilter = this.sortFilter.bind(this)
-    	this.state = {
-    		header: ["Category", "Store", "Item", "Price", "Brand", "Size", "Unit", "Date", "Comment"],
-	        loaded: false,
-	        data: [],
-	        edit: false,
-	        editID: "",
-	        delete: false,
-	        url: Config.api + '/expenses/' + this.props.username + '?page=1&sort=date',
-	        page: 1,
-	        pages: 0,
-	        budget: {
-	        	budget: 0,
-	        	expense: 0,
-	        	categoryExpense: Array(Config.categories.length).fill(0),
+		super(props)
+		this.handleSubmit = this.handleSubmit.bind(this)
+		this.sortFilter = this.sortFilter.bind(this)
+		this.state = {
+			header: ["Category", "Store", "Item", "Price", "Brand", "Size", "Unit", "Date", "Comment"],
+			loaded: false,
+			data: [],
+			edit: false,
+			editID: "",
+			delete: false,
+			url: Config.api + '/expenses/' + this.props.username + '?page=1&sort=date',
+			page: 1,
+			pages: 0,
+			budget: {
+				budget: 0,
+				expense: 0,
+				categoryExpense: Array(Config.categories.length).fill(0),
 				dailyExpense: []
-	        },
-	        dateMin: this.props.year + "-" + ("0" + this.props.month).slice(-2) + "-01",
-	        dateMax: this.props.year + "-" + ("0" + this.props.month).slice(-2) + "-" + daysInMonth(this.props.year, this.props.month)
-	    };
-  	}
+			},
+			dateMin: this.props.year + "-" + ("0" + this.props.month).slice(-2) + "-01",
+			dateMax: this.props.year + "-" + ("0" + this.props.month).slice(-2) + "-" + daysInMonth(this.props.year, this.props.month)
+		};
+	}
 
-  	handleSubmit(e) {
-	    e.preventDefault();
+	handleSubmit(e) {
+		e.preventDefault();
 
-	    if(this.refs.category.value && this.refs.store.value && this.refs.item.value && this.refs.price.value && 
-	    	this.refs.brand.value && this.refs.size.value && this.refs.unit.value && this.refs.date.value && 
-	    	this.refs.comment.value && this.state.loaded && !this.state.edit) {
+		if(this.refs.category.value && this.refs.store.value && this.refs.item.value && this.refs.price.value && 
+			this.refs.brand.value && this.refs.size.value && this.refs.unit.value && this.refs.date.value && 
+			this.refs.comment.value && this.state.loaded && !this.state.edit) {
 
-	    	fetch(Config.api + '/expenses/' + this.props.username, {
+			fetch(Config.api + '/expenses/' + this.props.username, {
 				method: 'post',
 				mode: 'cors',
 				headers: {'Content-Type':'application/json', 'x-access-token': this.props.token},
@@ -77,42 +77,42 @@ export default class extends React.Component {
 					comment: this.refs.comment.value
 				})
 			})
-	    	.then(() => this.updateExpenses())
+			.then(() => this.updateExpenses())
 			.catch(function(err) {
 				Router.push('/login');
 			})
-	    } else if(this.state.edit) {
-	    	var changed = {}
+		} else if(this.state.edit) {
+			var changed = {}
 
-	    	if(this.refs.category.value) {
-	    		changed.category = this.refs.category.value
-	    	}
-	    	if(this.refs.store.value) {
-	    		changed.store = this.refs.store.value
-	    	}
-	    	if(this.refs.item.value) {
-	    		changed.item = this.refs.item.value
-	    	}
-	    	if(this.refs.price.value) {
-	    		changed.price = this.refs.price.value
-	    	}
-	    	if(this.refs.brand.value) {
-	    		changed.brand = this.refs.brand.value
-	    	}
-	    	if(this.refs.size.value) {
-	    		changed.size = this.refs.size.value
-	    	}
-	    	if(this.refs.unit.value) {
-	    		changed.unit = this.refs.unit.value
-	    	}
-	    	if(this.refs.date.value) {
-	    		changed.date = this.refs.date.value
-	    	}
-	    	if(this.refs.category.value) {
-	    		changed.comment = this.refs.comment.value
-	    	}
+			if(this.refs.category.value) {
+				changed.category = this.refs.category.value
+			}
+			if(this.refs.store.value) {
+				changed.store = this.refs.store.value
+			}
+			if(this.refs.item.value) {
+				changed.item = this.refs.item.value
+			}
+			if(this.refs.price.value) {
+				changed.price = this.refs.price.value
+			}
+			if(this.refs.brand.value) {
+				changed.brand = this.refs.brand.value
+			}
+			if(this.refs.size.value) {
+				changed.size = this.refs.size.value
+			}
+			if(this.refs.unit.value) {
+				changed.unit = this.refs.unit.value
+			}
+			if(this.refs.date.value) {
+				changed.date = this.refs.date.value
+			}
+			if(this.refs.category.value) {
+				changed.comment = this.refs.comment.value
+			}
 
-	    	fetch(Config.api + '/expenses/' + this.props.username + '/' + this.state.editID, {
+			fetch(Config.api + '/expenses/' + this.props.username + '/' + this.state.editID, {
 				method: 'put',
 				mode: 'cors',
 				headers: {'Content-Type':'application/json', 'x-access-token':this.props.token},
@@ -122,9 +122,9 @@ export default class extends React.Component {
 			.catch(function(err) {
 				Router.push('/login');
 			})
-	    } else {
-	    	alert("All columns need to be filled in");
-	    }
+		} else {
+			alert("All columns need to be filled in");
+		}
 	}
 
 	editClass(id) {
@@ -140,11 +140,11 @@ export default class extends React.Component {
 
 		if(this.state.edit && id == this.state.editID) {
 			this.setState({
-	  			edit: false,
-	  			editID: id
-	  		})
+				edit: false,
+				editID: id
+			})
 		} else if(this.state.delete) {
-	    	fetch(Config.api + '/expenses/' + this.props.username + '/' + id, {
+			fetch(Config.api + '/expenses/' + this.props.username + '/' + id, {
 				method: 'delete',
 				mode: 'cors',
 				headers: {'Content-Type':'application/json', 'x-access-token': this.props.token},
@@ -153,16 +153,16 @@ export default class extends React.Component {
 			.catch(function(err) {
 				Router.push('/login');
 			})
-	    } else {
-	    	if(!this.state.edit) {
+		} else {
+			if(!this.state.edit) {
 				for(var i = 0; i < this.state.header.length; i++) {
 					this.refs[this.state.header[i].toLowerCase()].value = ""
 				}
 			}
 			this.setState({
-	  			edit: true,
-	  			editID: id
-	  		})
+				edit: true,
+				editID: id
+			})
 		}
 	}
 
@@ -170,8 +170,8 @@ export default class extends React.Component {
 		e.preventDefault()
 
 		this.setState({
-  			delete: !this.state.delete
-  		})
+			delete: !this.state.delete
+		})
 	}
 
 	editDelete() {
@@ -182,16 +182,16 @@ export default class extends React.Component {
 		}
 	}
 
-  	componentDidMount() {
-  		this.setState({
-  			loaded: true
-  		}, function() {
+	componentDidMount() {
+		this.setState({
+			loaded: true
+		}, function() {
 			this.updateExpenses()
 		})
-  	}
+	}
 
-  	sortFilter(e) {
-  		if(e) {
+	sortFilter(e) {
+		if(e) {
 			e.preventDefault();
 		}
 
@@ -269,14 +269,14 @@ export default class extends React.Component {
 		return {
 		  labels: temp,
 		  datasets: [
-		    {
-		      backgroundColor: 'rgba(255,99,132,0.2)',
-		      borderColor: 'rgba(255,99,132,1)',
-		      borderWidth: 1,
-		      hoverBackgroundColor: 'rgba(255,99,132,0.4)',
-		      hoverBorderColor: 'rgba(255,99,132,1)',
-		      data: data
-		    }
+			{
+			  backgroundColor: 'rgba(255,99,132,0.2)',
+			  borderColor: 'rgba(255,99,132,1)',
+			  borderWidth: 1,
+			  hoverBackgroundColor: 'rgba(255,99,132,0.4)',
+			  hoverBorderColor: 'rgba(255,99,132,1)',
+			  data: data
+			}
 		  ]
 		};
 	}
@@ -303,12 +303,12 @@ export default class extends React.Component {
 	}
 
 	editBudget() {
-	    var input = prompt("The current budget is:", this.state.budget.budget);
-	    if (input == null || input == "") {
-	        return
-	    } else {
-	       console.log(input)
-	       fetch(Config.api + '/budget/' + this.props.username + '/' + this.props.year + '/' + this.props.month, {
+		var input = prompt("The current budget is:", this.state.budget.budget);
+		if (input == null || input == "") {
+			return
+		} else {
+		   console.log(input)
+		   fetch(Config.api + '/budget/' + this.props.username + '/' + this.props.year + '/' + this.props.month, {
 				method: 'put',
 				mode: 'cors',
 				headers: {'Content-Type':'application/json', 'x-access-token':this.props.token},
@@ -316,59 +316,59 @@ export default class extends React.Component {
 					budget: input
 				})
 			})
-	       	// .then((res) => res.json())
-	       	// .then((res) => console.log(res))
+			// .then((res) => res.json())
+			// .then((res) => console.log(res))
 			.then(() => this.updateExpenses())
 			.catch(function(err) {
 				Router.push('/login');
 			})
-	    }
+		}
 	}
 
 	render() {
 		const options = {
-		    legend: {
-		        display: false,
-		    },
+			legend: {
+				display: false,
+			},
 		};
 
-	    return (
-	    	<div className="space">
-		    	<div className="window barChart">
-	    			<div className="bar">Daily Expenses</div>
-	    			<div className="barDiv">
-		    			<Bar
-				          data={this.dataToBarData(this.state.budget.dailyExpense)}
-				          width={100}
-				          height={300}
-				          options={
-				          	{ maintainAspectRatio: false, legend: { display: false }}
-				          }
-				        />
+		return (
+			<div className="space">
+				<div className="window barChart">
+					<div className="bar">Daily Expenses</div>
+					<div className="barDiv">
+						<Bar
+						  data={this.dataToBarData(this.state.budget.dailyExpense)}
+						  width={100}
+						  height={300}
+						  options={
+							{ maintainAspectRatio: false, legend: { display: false }}
+						  }
+						/>
 					</div>
-	    		</div>
-
-	    		<div className="window pie">
-	    			<div className="bar">Budget & Total Expenses<button className="editBudget" onClick={() => this.editBudget()}>Edit</button></div>
-	    			<div className="pieDiv">
-						<Doughnut data={this.dataToPieData(['Remaining Budget', 'Total Expenses'], [(this.state.budget.budget - this.state.budget.expense), this.state.budget.expense])}/>
-					</div>
-	    		</div>
+				</div>
 
 				<div className="window pie">
-	    			<div className="bar">Expenses By Category</div>
-	    			<div className="pieDiv">
-		    			<Doughnut data={this.dataToPieData(Config.categories, this.state.budget.categoryExpense)} options={options}/>
+					<div className="bar">Budget & Total Expenses<button className="editBudget" onClick={() => this.editBudget()}>Edit</button></div>
+					<div className="pieDiv">
+						<Doughnut data={this.dataToPieData(['Remaining Budget', 'Total Expenses'], [(this.state.budget.budget - this.state.budget.expense), this.state.budget.expense])}/>
 					</div>
-	    		</div>
+				</div>
 
-	    		<div className="window">
-	    			<div className="bar">Current Monthly Expenses</div>
-		    		{Array(this.state.pages).fill(1).map((item, i) => <button key={i} className="pageButton" onClick={() => this.setState({ page: i + 1 }, function() { this.updateExpenses() })}>{i + 1}</button>)}
-		    		<div className="dropdown">
-			    		<button className="dropButton">Sort/Filter</button>
-			    		<form onSubmit={this.sortFilter} className="sortFilter">
-			    			<div className="headerMenu">Sort by</div>
+				<div className="window pie">
+					<div className="bar">Expenses By Category</div>
+					<div className="pieDiv">
+						<Doughnut data={this.dataToPieData(Config.categories, this.state.budget.categoryExpense)} options={options}/>
+					</div>
+				</div>
+
+				<div className="window">
+					<div className="bar">Current Monthly Expenses</div>
+					{Array(this.state.pages).fill(1).map((item, i) => <button key={i} className="pageButton" onClick={() => this.setState({ page: i + 1 }, function() { this.updateExpenses() })}>{i + 1}</button>)}
+					<div className="dropdown">
+						<button className="dropButton">Sort/Filter</button>
+						<form onSubmit={this.sortFilter} className="sortFilter">
+							<div className="headerMenu">Sort by</div>
 							<select id="sort" name="sort" ref="sortBy" defaultValue="date">
 								<option value="date">Date</option>
 								<option value="price">Price</option>
@@ -395,8 +395,8 @@ export default class extends React.Component {
 						</form>
 					</div>
 
-			    	<form className="expense" onSubmit={this.handleSubmit}>
-				    	<table>
+					<form className="expense" onSubmit={this.handleSubmit}>
+						<table>
 							<tbody>
 								<tr className="notEdit">
 									<td>
@@ -404,16 +404,16 @@ export default class extends React.Component {
 											{Config.categories.map((name, index) => <option key={index} value={index}>{name}</option>)}
 										</select>
 									</td>
-						            <td><input type="text" ref="store" placeholder="store"/></td>
-						            <td><input type="text" ref="item" placeholder="item"/></td>
-						            <td><input type="number" ref="price" placeholder="price"/></td>
-						            <td><input type="text" ref="brand" placeholder="brand"/></td>
-						            <td><input type="number" ref="size" placeholder="size"/></td>
-						            <td><input type="text" ref="unit" placeholder="unit"/></td>
-						            <td><input type="date" ref="date"/></td>
-						            <td><input type="text" ref="comment" placeholder="comment"/></td>
-						            <td><input type="submit" value="Submit"/></td>
-						        </tr>
+									<td><input type="text" ref="store" placeholder="store"/></td>
+									<td><input type="text" ref="item" placeholder="item"/></td>
+									<td><input type="number" ref="price" placeholder="price"/></td>
+									<td><input type="text" ref="brand" placeholder="brand"/></td>
+									<td><input type="number" ref="size" placeholder="size"/></td>
+									<td><input type="text" ref="unit" placeholder="unit"/></td>
+									<td><input type="date" ref="date"/></td>
+									<td><input type="text" ref="comment" placeholder="comment"/></td>
+									<td><input type="submit" value="Submit"/></td>
+								</tr>
 								<tr className="notEdit">
 									{this.state.header.map((element, index) => <th key={index}>{element}</th>)}
 									<td><button onClick={(e) => this.editDeleteButton(e)}>Edit/Delete</button></td>
@@ -428,10 +428,10 @@ export default class extends React.Component {
 						font-family: sans-serif;
 						font-size: 13px;
 						display: -webkit-flex;
-					    -webkit-flex-flow: wrap;
-					    display: flex;
-					    flex-flow: wrap;
-					    width: 100%;
+						-webkit-flex-flow: wrap;
+						display: flex;
+						flex-flow: wrap;
+						width: 100%;
 					}
 
 					.pie {
@@ -513,8 +513,8 @@ export default class extends React.Component {
 						width: 125px;
 						background: white;
 						box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.2);
-    					z-index: 1;
-    					text-align: center;
+						z-index: 1;
+						text-align: center;
 					}
 
 					.dropdown:hover .sortFilter {
@@ -527,21 +527,21 @@ export default class extends React.Component {
 					}
 
 					table {
-					    font-family: arial, sans-serif;
-					    border-collapse: collapse;
-					    width: 100%;
-					   	font-size: 12px;
-					   	text-align: center;
+						font-family: arial, sans-serif;
+						border-collapse: collapse;
+						width: 100%;
+						font-size: 12px;
+						text-align: center;
 					}
 
 					tbody {
-        				overflow: auto;
+						overflow: auto;
 					}
 
 					td, th {
-					    border: 1px solid #dddddd;
-					    text-align: left;
-					    padding: 8px;
+						border: 1px solid #dddddd;
+						text-align: left;
+						padding: 8px;
 					}
 
 					tr.notEdit:nth-child(even) {

@@ -16,10 +16,10 @@ export default class extends React.Component {
 	}
 
 	render() {
-	    return (
-	      	<Layout>
-	      		Logging you out safely
+		return (
+			<Layout>
+				Logging you out safely
 			</Layout>
-	    )
-  	}
+		)
+	}
 }

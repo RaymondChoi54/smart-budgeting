@@ -7,29 +7,29 @@ const handle = app.getRequestHandler();
 
 app.prepare()
 .then(() => {
-    const server = express();
+	const server = express();
 
-    server.get('/budget/:year/:month', (req, res) => {
-        const actualPage = '/budget'
-        const queryParams = { year: req.params.year, month: req.params.month }
-        app.render(req, res, actualPage, queryParams)
-    })
+	server.get('/budget/:year/:month', (req, res) => {
+		const actualPage = '/budget'
+		const queryParams = { year: req.params.year, month: req.params.month }
+		app.render(req, res, actualPage, queryParams)
+	})
 
-    server.get('/', (req, res) => {
-        const actualPage = '/login';
-        app.render(req, res, actualPage);
-    });
+	server.get('/', (req, res) => {
+		const actualPage = '/login';
+		app.render(req, res, actualPage);
+	});
 
-    server.get('*', (req, res) => {
-        return handle(req, res);
-    });
+	server.get('*', (req, res) => {
+		return handle(req, res);
+	});
 
-    server.listen(3000, (err) => {
-        if (err) throw err
-        console.log('> Ready on http://localhost:3000');
-    });
+	server.listen(3000, (err) => {
+		if (err) throw err
+		console.log('> Ready on http://localhost:3000');
+	});
 })
 .catch((ex) => {
-    console.error(ex.stack);
-    process.exit(1);
+	console.error(ex.stack);
+	process.exit(1);
 });
