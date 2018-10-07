@@ -14,13 +14,18 @@ export default class extends React.Component {
 	handleSubmit(e) {
 	    e.preventDefault();
 
-	    fetch(Config.api + '/session', {
+	    var un = this.refs.username.value
+	    var fn = this.refs.fullname.value
+
+	    fetch(Config.api + '/users', {
 			method: 'post',
 			mode: 'cors',
 			headers: {'Content-Type':'application/json'},
 			body: JSON.stringify({
-		    	username: this.refs.username.value,
-		    	password: this.refs.password.value
+		    	username: un,
+		    	password: this.refs.password.value,
+		    	fullname: fn,
+		    	email: this.refs.email.value
 			})
 		})
 		.then((res) => res.json())
@@ -28,14 +33,10 @@ export default class extends React.Component {
 			if(err) {
 				alert("Please try again");
 			} else {
-				if(!data.auth) {
-					alert("Incorrect login info");
-				} else {
-					Cookies.set('token', data.data.token, { expires: 1 });
-					Cookies.set('username', data.data.username, { expires: 1 });
-					Cookies.set('fullname', data.data.fullname, { expires: 1 });
-					Router.push('/dashboard');
-				}
+				Cookies.set('token', data.token, { expires: 1 });
+				Cookies.set('username', un, { expires: 1 });
+				Cookies.set('fullname', fn, { expires: 1 });
+				Router.push('/dashboard');
 			}
 		})
 	 }
@@ -43,15 +44,15 @@ export default class extends React.Component {
 	render() {
 	    return (
 			<div>
-				<div>
-		          	<form onSubmit={this.handleSubmit} >
-		          		<h1>Login</h1>
-			            <input type="text" ref="username" placeholder="Username"/>
-			            <input type="password" ref="password" placeholder="Password"/>
-			            <input type="submit" value="Submit"/>
-		          	</form>
-		          	<Link href="/register">No account? Create an account now</Link>
-		      	</div>
+	          	<form onSubmit={this.handleSubmit} >
+	          		<h1>Register</h1>
+	          		<input type="text" ref="email" placeholder="Email"/>
+	          		<input type="text" ref="fullname" placeholder="Fullname"/>
+		            <input type="text" ref="username" placeholder="Username"/>
+		            <input type="password" ref="password" placeholder="Password"/>
+		            <input type="submit" value="Submit"/>
+	          	</form>
+	          	<Link href="/login">Already have an account? Login now</Link>
 				<style jsx>{`
 		      		div { 
 		        		background: white;
@@ -59,9 +60,9 @@ export default class extends React.Component {
 		        		top: 50%;
 		    			left: 50%;
 		    			margin-left: -205px;
-		    			margin-top: -200px;
+		    			margin-top: -215px;
 		    			width: 400px;
-		    			max-height: 400px;
+		    			height: 430px;
 		    			text-align: right;
 		    			padding: 5px;
 		      		}

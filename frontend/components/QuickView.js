@@ -22,12 +22,12 @@ const QuickView = (props) => (
 	<table>
 		<tbody>
 			<tr>
-				{columns.map((column, index) => (<th>{column}</th>))}
+				{columns.map((column, index) => (<th key={index}>{column}</th>))}
 			</tr>
 			{props.data.map((expense, index) => (
-				<tr>
-					{columns.map((column, index) => (
-						<td>{convert(expense, column)}</td>
+				<tr key={index}>
+					{columns.map((column, i) => (
+						<td key={i}>{convert(expense, column)}</td>
 					))}
 				</tr>
 			))}
