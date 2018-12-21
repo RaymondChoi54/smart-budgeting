@@ -50,7 +50,7 @@ export default class extends React.Component {
 				dailyExpense: []
 			},
 			dateMin: this.props.year + "-" + ("0" + this.props.month).slice(-2) + "-01",
-			dateMax: this.props.year + "-" + ("0" + this.props.month).slice(-2) + "-" + daysInMonth(this.props.year, this.props.month)
+			dateMax: this.props.year + "-" + ("0" + this.props.month).slice(-2) + "-" + daysInMonth(this.props.month, this.props.year)
 		};
 	}
 
@@ -108,7 +108,7 @@ export default class extends React.Component {
 			if(this.refs.date.value) {
 				changed.date = this.refs.date.value
 			}
-			if(this.refs.category.value) {
+			if(this.refs.comment.value) {
 				changed.comment = this.refs.comment.value
 			}
 
