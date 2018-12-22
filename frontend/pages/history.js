@@ -47,6 +47,9 @@ export default class extends React.Component {
   	}
 
 	render() {
+		if(!this.state.loaded) {
+			return (<div/>)
+		}
 		return (
 	    	<LayoutBar config={names} name={this.state.fullname}>
 	    		<div className="container">

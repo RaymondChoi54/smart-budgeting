@@ -37,6 +37,11 @@ export default class extends React.Component {
   	}
 
 	render() {
+
+		if(!this.state.loaded) {
+			return (<div/>)
+		}
+		
 		return (
 	    	<LayoutBar config={names} name={this.state.fullname} barName="Current Monthly Expenses">
 		        <ExpenseTable username={this.state.username} token={this.state.token} year={new Date(Date.now()).getFullYear()} month={new Date(Date.now()).getMonth() + 1}/>

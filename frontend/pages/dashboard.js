@@ -147,6 +147,10 @@ export default class extends React.Component {
 
 	render() {
 
+		if(!this.state.loaded) {
+			return (<div/>)
+		}
+
 		const options = {
 			legend: {
 				display: false,
