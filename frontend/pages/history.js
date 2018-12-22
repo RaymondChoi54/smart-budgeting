@@ -33,6 +33,7 @@ export default class extends React.Component {
   	componentDidMount() {
   		if(!this.state.fullname || !this.state.username || !this.state.token) {
   			Router.push('/login');
+  			return;
   		}
   		this.setState({
   			loaded: true
