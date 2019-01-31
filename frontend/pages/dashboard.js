@@ -184,11 +184,11 @@ export default class extends React.Component {
 						<div className="cube odd even">
 							<Window barName="Statistics">
 								<ul>
-									<li>Total Dollars Recorded: {this.state.stats.totDollars}</li>
-									<li>Total Expenses Recorded: {this.state.stats.totExpenses}</li>
-									<li>Average Budget: {this.state.stats.avgBudget}</li>
-									<li>Average Expenses: {this.state.stats.avgExpenses}</li>
-									<li>Average Daily Spending: {this.state.stats.avgSpentDaily}</li>
+									<li>Total Dollars Recorded: {Math.round(this.state.stats.totDollars)}</li>
+									<li>Total Expenses Recorded: {Math.round(this.state.stats.totExpenses)}</li>
+									<li>Average Budget: {Math.round(this.state.stats.avgBudget)}</li>
+									<li>Average Expenses: {Math.round(this.state.stats.avgExpenses)}</li>
+									<li>Average Daily Spending: {Math.round(this.state.stats.avgSpentDaily)}</li>
 									<li>Most Spent Category: {Config.categories[this.state.stats.maxCategory]}</li>
 								</ul>
 							</Window>
